@@ -1,52 +1,29 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import Indecision from './components/Indecision.js'
-import './styles/styles.scss'
-import 'normalize.css/normalize.css'
-
-console.log("Webpack is Running!")
-
-// class Header extends React.Component {
-//     render() {
-//         return (
-//             <div>
-//                 <h1>{this.props.title}</h1>
-//                 <h2>{this.props.subtitle}</h2>
-//             </div>
-//         )
-//     }
-// }
-
-// class Action extends React.Component {
-//     render() {
-//         return (
-//             <div>
-//                 <button onClick={this.props.handlePick}>What Should I do?</button>
-//             </div>
-//         )
-//     }
-// }
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import AppRouter from './routers/AppRouter';
+import configureStore from './store/configureStore';
+import { addExpense } from './actions/expenses';
+import { setTextFilter } from './actions/filters';
+import getVisibleExpenses from './selectors/expenses';
+import 'normalize.css/normalize.css';
+import './styles/styles.scss';
 
 
-// class Options extends React.Component {
-//     render() {
-//         return (
-//             <div>
-//                 <button onClick={this.props.handleDeleteOptions}>RemoveAll</button>
-//                 {this.props.options.map((option)=> <Option key={option} optionText={option}/>)}
-//             </div>
-//         )
-//     }
-// }
+const store = configureStore();
 
-// class Option extends React.Component {
-//     render() {
-//         return (
-//             <div>
-//                 {this.props.optionText}
-//             </div>
-//         )
-//     }
-// }
+store.dispatch(addExpense({ description: 'Water bill', amount: 110500000 }));
+store.dispatch(addExpense({ description: 'Gas bill' }));
+store.dispatch(addExpense({ description: 'Rent', amount: 1105000 }));
 
-ReactDOM.render(<Indecision/>, document.getElementById('app'))
+const state = store.getState();
+const visibleExpenses = getVisibleExpenses(state.expenses, state.filters);
+console.log(visibleExpenses);
+
+const jsx = (
+  <Provider store={store}>
+    <AppRouter />
+  </Provider>
+);
+
+ReactDOM.render(jsx, document.getElementById('app'));
